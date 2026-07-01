@@ -131,15 +131,15 @@ class GaussianExtractor(object):
                 }
                 self.depth_stats["views"].append(view_stats)
 
-                print(
-                    f"[view {i:04d}] depth stats:",
-                    "min", view_stats["min"],
-                    "p50", view_stats["p50"],
-                    "p90", view_stats["p90"],
-                    "p95", view_stats["p95"],
-                    "p99", view_stats["p99"],
-                    "max", view_stats["max"],
-                )
+                # print(
+                #     f"[view {i:04d}] depth stats:",
+                #     "min", view_stats["min"],
+                #     "p50", view_stats["p50"],
+                #     "p90", view_stats["p90"],
+                #     "p95", view_stats["p95"],
+                #     "p99", view_stats["p99"],
+                #     "max", view_stats["max"],
+                # )
 
                 max_samples_per_view = 20000
                 stride = max(1, flat.numel() // max_samples_per_view)
@@ -165,7 +165,7 @@ class GaussianExtractor(object):
                 "max": float(all_depth_samples.max().item()),
             }
 
-            print("[all views sampled] depth stats:", self.depth_stats["all_views_sampled"])
+            # print("[all views sampled] depth stats:", self.depth_stats["all_views_sampled"])
 
         self.estimate_bounding_sphere()
 
