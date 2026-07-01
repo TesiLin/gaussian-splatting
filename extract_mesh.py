@@ -59,8 +59,6 @@ if __name__ == "__main__":
         print("export training images ...")
         os.makedirs(train_dir, exist_ok=True)
         train_cameras = scene.getTrainCameras()
-        if scene.use_lazy_loading:
-            scene.load_camera_batch(train_cameras, list(range(len(train_cameras))))
         gaussExtractor.reconstruction(train_cameras)
         gaussExtractor.export_image(train_dir)
 
@@ -68,8 +66,6 @@ if __name__ == "__main__":
         print("export rendered testing images ...")
         os.makedirs(test_dir, exist_ok=True)
         test_cameras = scene.getTestCameras()
-        if scene.use_lazy_loading:
-            scene.load_camera_batch(test_cameras, list(range(len(test_cameras))))
         gaussExtractor.reconstruction(test_cameras)
         gaussExtractor.export_image(test_dir)
 
@@ -78,8 +74,6 @@ if __name__ == "__main__":
         os.makedirs(train_dir, exist_ok=True)
         # Use training cameras for mesh extraction
         train_cameras = scene.getTrainCameras()
-        if scene.use_lazy_loading:
-            scene.load_camera_batch(train_cameras, list(range(len(train_cameras))))
         gaussExtractor.reconstruction(train_cameras)
 
         tag = f"_{args.mesh_tag}" if args.mesh_tag else ""

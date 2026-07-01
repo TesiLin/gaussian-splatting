@@ -1,8 +1,5 @@
 #!/bin/bash
 set -e
-echo "PATH: $PATH"
-echo "Which conda: $(which conda)"
-echo "Which python: $(which python)"
 
 cd /workspace/code/gaussian-splatting-tutorial/code/3dgs
 echo "cd dir"
@@ -26,19 +23,11 @@ run_mesh() {
   local sdf_trunc
   sdf_trunc=$(awk -v v="$voxel_size" 'BEGIN { printf "%.6f", v * 4 }')
 
-  local tag_depth tag_voxel tag_sdf
-  tag_depth=$(echo "$depth_trunc" | sed 's/\./p/g')
-  tag_voxel=$(echo "$voxel_size" | sed 's/\./p/g')
-  tag_sdf=$(echo "$sdf_trunc" | sed 's/\./p/g')
-
-  local mesh_tag="d${tag_depth}_v${tag_voxel}_s${tag_sdf}_c${num_cluster}"
-
   echo "Running mesh extraction:"
   echo "  depth_trunc = $depth_trunc"
   echo "  voxel_size  = $voxel_size"
   echo "  sdf_trunc   = $sdf_trunc"
   echo "  num_cluster = $num_cluster"
-  echo "  mesh_tag    = $mesh_tag"
 
   python extract_mesh.py \
     -s "$DATASET" \
@@ -46,8 +35,7 @@ run_mesh() {
     --voxel_size "$voxel_size" \
     --sdf_trunc "$sdf_trunc" \
     --depth_trunc "$depth_trunc" \
-    --num_cluster "$num_cluster" \
-    --mesh_tag "$mesh_tag"
+    --num_cluster "$num_cluster"
 }
 
 run_mesh_by_depth() {
@@ -60,11 +48,11 @@ run_mesh_by_depth() {
   run_mesh "$depth_trunc" "$voxel_size" "$num_cluster"
 }
 
-DATASET="/workspace/3Ddataset/dxq0629_bbox_959_1961"
+DATASET="../../dataset/dxq0629_bbox_959_1961"
 MODEL="output/dxq0629_bbox_959_1961"
 
-python train.py -s "$DATASET" -m "$MODEL"
+# python train.py -s "$DATASET" -m "$MODEL"
 
-python render.py -s "$DATASET" -m "$MODEL"
+# python render.py -s "$DATASET" -m "$MODEL"
 
 run_mesh 3 0.04 5
