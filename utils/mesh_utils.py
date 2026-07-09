@@ -20,6 +20,20 @@ import open3d as o3d
 import trimesh
 import json
 
+def safe_quantile(values, quantiles, max_samples=1000000):
+    """
+    Compute approximate quantiles on a bounded number of samples.
+
+    torch.quantile can fail on very large CUDA tensors, so depth diagnostics use
+    deterministic strided sampling. This keeps mesh extraction usable on large
+    image sets while preserving stable summary statistics.
+    """
+    flat = values.flatten()
+    if flat.numel() > max_samples:
+        stride = math.ceil(flat.numel() / max_samples)
+        flat = flat[::stride]
+    return torch.quantile(flat, quantiles.to(flat.device))
+
 def post_process_mesh(mesh, cluster_to_keep=1000):
     """
     Post-process a mesh to filter out floaters and disconnected parts
@@ -114,7 +128,11 @@ class GaussianExtractor(object):
             valid = depth[depth > 0]
             if valid.numel() > 0:
                 flat = valid.flatten()
-                qs = torch.quantile(
+                # qs = torch.quantile(
+                #     flat,
+                #     torch.tensor([0.5, 0.9, 0.95, 0.99], device=flat.device)
+                # )
+                qs = safe_quantile(
                     flat,
                     torch.tensor([0.5, 0.9, 0.95, 0.99], device=flat.device)
                 )
@@ -150,11 +168,15 @@ class GaussianExtractor(object):
 
         if len(all_depth_samples) > 0:
             all_depth_samples = torch.cat(all_depth_samples).cuda()
-            qs = torch.quantile(
+            # qs = torch.quantile(
+            #     all_depth_samples,
+            #     torch.tensor([0.5, 0.9, 0.95, 0.99], device=all_depth_samples.device)
+            # )
+            qs = safe_quantile(
                 all_depth_samples,
                 torch.tensor([0.5, 0.9, 0.95, 0.99], device=all_depth_samples.device)
             )
-
+            
             self.depth_stats["all_views_sampled"] = {
                 "sampled_pixels": int(all_depth_samples.numel()),
                 "min": float(all_depth_samples.min().item()),

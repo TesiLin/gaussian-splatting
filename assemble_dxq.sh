@@ -51,7 +51,7 @@ run_mesh_by_depth() {
 DATASET="../../dataset/dxq0629_bbox_959_1961"
 MODEL="output/dxq0629_bbox_959_1961"
 
-# python train.py -s "$DATASET" -m "$MODEL"
+# python train.py -s "$DATASET" -r 2 -m "$MODEL"
 
 # python render.py -s "$DATASET" -m "$MODEL"
 
