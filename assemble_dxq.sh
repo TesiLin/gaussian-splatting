@@ -51,7 +51,7 @@ run_mesh_by_depth() {
 DATASET="../../dataset/dxq0629_colmap"
 MODEL="output/dxq0629_colmap"
 
-python train.py -s "$DATASET" -r 2 -m "$MODEL"
+python train.py -s "$DATASET" -r 4 -m "$MODEL" --iterations 30000
 
 python render.py -s "$DATASET" -m "$MODEL"
 
